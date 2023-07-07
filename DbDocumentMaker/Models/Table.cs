@@ -13,6 +13,8 @@ namespace DbDocumentMaker.Models
 
         public string Description { get; set; }
 
+        public string MS_Description { get; set; }
+
         public string TableType { get; set; }
 
         public bool IsViewTable

@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 
 namespace DbDocumentMaker
 {
@@ -76,7 +77,16 @@ namespace DbDocumentMaker
                             FKReference = c.FkReferencedInfo,
                             Identity = c.IsIdentity,
                             Default = c.Default,
-                            Description = c.Description
+                            Description = c.Description,
+                            MS_Description = c.MS_Description
+//$@"=""IF not exists(SELECT * FROM ::fn_listextendedproperty (NULL, 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'))
+//BEGIN  
+// exec sp_addextendedproperty 'MS_Description', '""&J{c.No + 5}&""', 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'
+//END  
+//ELSE
+//BEGIN  
+// exec sp_updateextendedproperty 'MS_Description', '""&J{c.No + 5}&""', 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'
+//END"""
                         }).ToList();
 
             dgvColumns.AutoResizeColumns();

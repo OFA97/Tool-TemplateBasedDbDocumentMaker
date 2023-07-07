@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DbDocumentMaker.Models;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,8 @@ namespace DbDocumentMaker.Utility
                                    TableName = key,
                                    Description = group.Any() ? group.First().TableDescription : "",
                                    TableType = group.Any() ? group.First().TableType : "",
-                                   Columns = group.ToList()
+                                   Columns = group.ToList(),
+                                   MS_Description = group.Any() ? group.First().TableMS_Description : ""
                                }
                               ).ToList();
 
@@ -126,6 +128,42 @@ namespace DbDocumentMaker.Utility
                       ,kcu2.TABLE_NAME AS 'FkReferencedTable' 
                       ,kcu2.COLUMN_NAME AS 'FkReferencedColumn'
 
+,'=""IF EXISTS (
+    SELECT * FROM sys.extended_properties 
+    WHERE major_id = OBJECT_ID(''""##TABLENAME##""'') 
+    AND minor_id = 0 
+    AND class = 1
+    AND name = ''MS_Description''
+)
+BEGIN
+    EXEC sys.sp_updateextendedproperty 
+        @name = N''MS_Description'',
+        @value = ''""##Description##""'',
+        @level0type = N''SCHEMA'',
+        @level0name = N''dbo'',
+        @level1type = N''TABLE'',
+        @level1name = N''""##TABLENAME##""'';
+END
+ELSE
+BEGIN
+    EXEC sys.sp_addextendedproperty 
+        @name = N''MS_Description'',
+        @value = ''""##Description##""'',
+        @level0type = N''SCHEMA'',
+        @level0name = N''dbo'',
+        @level1type = N''TABLE'',
+        @level1name = N''""##TABLENAME##""'';
+END""' AS 'TableMS_Description'
+
+,'=""IF not exists(SELECT * FROM ::fn_listextendedproperty (NULL, ''user'', ''dbo'', ''table'', ''' + tb.TABLE_NAME + ''', ''column'', ''' + '""&B' + convert(varchar(max), (col.ORDINAL_POSITION + 5)) + '&""' + '''))
+BEGIN  
+ exec sp_addextendedproperty ''MS_Description'', ''' + '""&J' + convert(varchar(max), (col.ORDINAL_POSITION + 5)) + '&""' + ''', ''user'', ''dbo'', ''table'', ''' + tb.TABLE_NAME + ''', ''column'', ''' + '""&B' + convert(varchar(max), (col.ORDINAL_POSITION + 5)) + '&""' + '''
+END  
+ELSE
+BEGIN  
+ exec sp_updateextendedproperty ''MS_Description'', ''' + '""&J' + convert(varchar(max), (col.ORDINAL_POSITION + 5)) + '&""' + ''', ''user'', ''dbo'', ''table'', ''' + tb.TABLE_NAME + ''', ''column'', ''' + '""&B' + convert(varchar(max), (col.ORDINAL_POSITION + 5)) + '&""' + '''
+END""' AS 'MS_Description'
+
                   FROM 
 
                   INFORMATION_SCHEMA.TABLES tb
@@ -166,6 +204,7 @@ namespace DbDocumentMaker.Utility
             const string tagName4TableNo = "#table.no";
             const string tagName4TableName = "#table.name";
             const string tagName4TableDesc = "#table.description";
+            const string tagName4TableMS_Desc = "#table.MS_description";
             const string tagName4TableView = "#table.view";
             const string tagName4TableType = "#table.type";
             const string tagName4ColumnNo = "#column.no";
@@ -178,6 +217,7 @@ namespace DbDocumentMaker.Utility
             const string tagName4ColumnDataType = "#column.datatype";
             const string tagName4ColumnDefault = "#column.default";
             const string tagName4ColumnDesc = "#column.description";
+            const string tagName4ColumnMS_Desc = "#column.MS_description";
 
 
             // open template file
@@ -202,6 +242,9 @@ namespace DbDocumentMaker.Utility
                 if (noLocation.HasValue)
                 {
                     // copy the table info row from tempalte
+
+                    //string a = table.MS_Description;
+
                     tableSheet.CopyRow(noLocation.Value.Y, noLocation.Value.Y + 1);
 
                     var newRowIndex = noLocation.Value.Y;
@@ -210,6 +253,8 @@ namespace DbDocumentMaker.Utility
                     tableSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4TableDesc, table.Description);
                     tableSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4TableView, table.IsViewTable ? "V" : "");
                     tableSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4TableType, table.TableType.ToTitleCase());
+                    tableSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4TableMS_Desc, 
+                        table.MS_Description?.Replace("##TABLENAME##", $"&B{tableIndex + 3}&").Replace("##Description##", $"&C{tableIndex + 3}&"));
 
                     tableIndex++;
                 }
@@ -255,6 +300,7 @@ namespace DbDocumentMaker.Utility
                         schemaSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4ColumnDataType, column.FullDataType);
                         schemaSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4ColumnDefault, column.Default);
                         schemaSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4ColumnDesc, column.Description);
+                        schemaSheet.SetFirstMatchCellContentInRow(newRowIndex, tagName4ColumnMS_Desc, column.MS_Description);
 
                     }
 

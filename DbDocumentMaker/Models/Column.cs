@@ -14,6 +14,8 @@ namespace DbDocumentMaker.Models
 
         public string TableDescription { get; set; }
 
+        public string TableMS_Description { get; set; }
+
         public string TableType { get; set; }
 
         public string ColumnName { get; set; }
@@ -52,6 +54,8 @@ namespace DbDocumentMaker.Models
         public string Identity { get; set; }
 
         public string Description { get; set; }
+
+        public string MS_Description { get; set; }
 
         public string PK { get; set; }
 
