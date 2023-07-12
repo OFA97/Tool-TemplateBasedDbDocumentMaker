@@ -79,14 +79,14 @@ namespace DbDocumentMaker
                             Default = c.Default,
                             Description = c.Description,
                             MS_Description = c.MS_Description
-//$@"=""IF not exists(SELECT * FROM ::fn_listextendedproperty (NULL, 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'))
-//BEGIN  
-// exec sp_addextendedproperty 'MS_Description', '""&J{c.No + 5}&""', 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'
-//END  
-//ELSE
-//BEGIN  
-// exec sp_updateextendedproperty 'MS_Description', '""&J{c.No + 5}&""', 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'
-//END"""
+                            //$@"=""IF not exists(SELECT * FROM ::fn_listextendedproperty (NULL, 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'))
+                            //BEGIN  
+                            // exec sp_addextendedproperty 'MS_Description', '""&J{c.No + 5}&""', 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'
+                            //END  
+                            //ELSE
+                            //BEGIN  
+                            // exec sp_updateextendedproperty 'MS_Description', '""&J{c.No + 5}&""', 'user', 'dbo', 'table', '{tableName}', 'column', '{c.ColumnName}'
+                            //END"""
                         }).ToList();
 
             dgvColumns.AutoResizeColumns();
@@ -132,7 +132,7 @@ namespace DbDocumentMaker
                     MsgBoxHelper.Error("Failure: " + ex.Message);
                 }
 
-                
+
             }
             else
             { MsgBoxHelper.Warning("Please select table!"); }
@@ -144,7 +144,7 @@ namespace DbDocumentMaker
         {
             var tableName = string.Empty;
             if (clbTables.SelectedIndex > -1)
-            { 
+            {
                 tableName = (clbTables.Items[clbTables.SelectedIndex] as Table).TableName;
                 ShowTableColumns(tableName);
             }
@@ -198,10 +198,32 @@ namespace DbDocumentMaker
                         _dbManager.LoadTables(Config.GetInstance().Content.CurrentConnection.Str);
                         ShowTables(_dbManager.DbTables);
                     }
-                    
+
                 }
             }
         }
 
+        private void btnFillBackServer_Click(object sender, EventArgs e)
+        {
+            ///step2.撈現有的資料表,欄位,表名稱對應[sheet],欄位名對應[]
+
+            {
+                string filePath = openFileDialog.FileName;
+
+                ConfigContent cc = Config.GetInstance().Content;
+
+                if (File.Exists(Path.Combine(cc.OutputDocLocation, Export.TableFile)))
+                {
+                    File.Delete(Path.Combine(cc.OutputDocLocation, Export.TableFile));
+                }
+
+                if (File.Exists(Path.Combine(cc.OutputDocLocation, Export.ColumnFile)))
+                {
+                    File.Delete(Path.Combine(cc.OutputDocLocation, Export.ColumnFile));
+                }
+
+                NpoiHelper.ReadExcelFile(filePath);
+            }
+        }
     }
 }

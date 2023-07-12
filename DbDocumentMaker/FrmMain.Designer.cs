@@ -38,6 +38,7 @@
             this.btnSetting = new System.Windows.Forms.Button();
             this.lbTables = new System.Windows.Forms.Label();
             this.lbColumnInfo = new System.Windows.Forms.Label();
+            this.btnFillBackServer = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvColumns)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,7 +46,7 @@
             // 
             this.btnGenerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGenerate.BackColor = System.Drawing.Color.LightGreen;
-            this.btnGenerate.Location = new System.Drawing.Point(657, 19);
+            this.btnGenerate.Location = new System.Drawing.Point(657, 17);
             this.btnGenerate.Name = "btnGenerate";
             this.btnGenerate.Size = new System.Drawing.Size(160, 38);
             this.btnGenerate.TabIndex = 0;
@@ -92,9 +93,9 @@
             // 
             // btnRememberCheckedTables
             // 
-            this.btnRememberCheckedTables.Location = new System.Drawing.Point(264, 18);
+            this.btnRememberCheckedTables.Location = new System.Drawing.Point(264, 17);
             this.btnRememberCheckedTables.Name = "btnRememberCheckedTables";
-            this.btnRememberCheckedTables.Size = new System.Drawing.Size(167, 37);
+            this.btnRememberCheckedTables.Size = new System.Drawing.Size(167, 38);
             this.btnRememberCheckedTables.TabIndex = 4;
             this.btnRememberCheckedTables.Text = "Remember Checked Tables";
             this.btnRememberCheckedTables.UseVisualStyleBackColor = true;
@@ -104,7 +105,7 @@
             // 
             this.btnCheckAll.Location = new System.Drawing.Point(104, 17);
             this.btnCheckAll.Name = "btnCheckAll";
-            this.btnCheckAll.Size = new System.Drawing.Size(67, 37);
+            this.btnCheckAll.Size = new System.Drawing.Size(67, 38);
             this.btnCheckAll.TabIndex = 5;
             this.btnCheckAll.Text = "Check All";
             this.btnCheckAll.UseVisualStyleBackColor = true;
@@ -112,9 +113,9 @@
             // 
             // btnUnCheckAll
             // 
-            this.btnUnCheckAll.Location = new System.Drawing.Point(177, 18);
+            this.btnUnCheckAll.Location = new System.Drawing.Point(177, 17);
             this.btnUnCheckAll.Name = "btnUnCheckAll";
-            this.btnUnCheckAll.Size = new System.Drawing.Size(76, 37);
+            this.btnUnCheckAll.Size = new System.Drawing.Size(76, 38);
             this.btnUnCheckAll.TabIndex = 6;
             this.btnUnCheckAll.Text = "UnCheck All";
             this.btnUnCheckAll.UseVisualStyleBackColor = true;
@@ -124,9 +125,9 @@
             // 
             this.btnSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSetting.BackColor = System.Drawing.Color.BurlyWood;
-            this.btnSetting.Location = new System.Drawing.Point(823, 19);
+            this.btnSetting.Location = new System.Drawing.Point(823, 17);
             this.btnSetting.Name = "btnSetting";
-            this.btnSetting.Size = new System.Drawing.Size(80, 37);
+            this.btnSetting.Size = new System.Drawing.Size(80, 38);
             this.btnSetting.TabIndex = 7;
             this.btnSetting.Text = "Setting";
             this.btnSetting.UseVisualStyleBackColor = false;
@@ -150,11 +151,22 @@
             this.lbColumnInfo.TabIndex = 9;
             this.lbColumnInfo.Text = "Column Info";
             // 
+            // btnFillBackServer
+            // 
+            this.btnFillBackServer.Location = new System.Drawing.Point(437, 17);
+            this.btnFillBackServer.Name = "btnFillBackServer";
+            this.btnFillBackServer.Size = new System.Drawing.Size(104, 38);
+            this.btnFillBackServer.TabIndex = 10;
+            this.btnFillBackServer.Text = "Fill Back Server";
+            this.btnFillBackServer.UseVisualStyleBackColor = true;
+            this.btnFillBackServer.Click += new System.EventHandler(this.btnFillBackServer_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(915, 465);
+            this.Controls.Add(this.btnFillBackServer);
             this.Controls.Add(this.lbColumnInfo);
             this.Controls.Add(this.lbTables);
             this.Controls.Add(this.btnSetting);
@@ -186,6 +198,7 @@
         private System.Windows.Forms.Button btnSetting;
         private System.Windows.Forms.Label lbTables;
         private System.Windows.Forms.Label lbColumnInfo;
+        private System.Windows.Forms.Button btnFillBackServer;
     }
 }
 

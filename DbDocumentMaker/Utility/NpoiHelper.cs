@@ -1,11 +1,9 @@
-﻿using NPOI.SS.UserModel;
+﻿using DbDocumentMaker.Models;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace DbDocumentMaker.Utility
 {
@@ -34,7 +32,7 @@ namespace DbDocumentMaker.Utility
         {
 
             var link = new XSSFHyperlink(HyperlinkType.Document);
-            link.Address = ("'"+ sheetName + "'!A1");
+            link.Address = ("'" + sheetName + "'!A1");
             sheet.GetRow(location.Y).GetCell(location.X).Hyperlink = link;
             sheet.GetRow(location.Y).GetCell(location.X).SetCellValue(cellContent);
         }
@@ -166,6 +164,55 @@ namespace DbDocumentMaker.Utility
                 if (columnIndex.HasValue)
                     sheet.SetCellHyperlink(new Point(columnIndex.Value, rowIndex), newContent, linkedSheetName);
             }
+        }
+
+        public static void ReadExcelFile(string filePath)
+        {
+            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                XSSFWorkbook workbook = new XSSFWorkbook(fs);
+
+                for (int sheetIndex = 0; sheetIndex < workbook.NumberOfSheets; sheetIndex++)
+                {
+                    ISheet sheet = workbook.GetSheetAt(sheetIndex);
+
+                    DescMap(sheet,
+                        (sheet.SheetName == "Table List") ? "Table" : "Column");
+                }
+            }
+        }
+
+        private static void DescMap(ISheet sheet, string Type)
+        {
+            var Location_Name = sheet.FindCellLocation($"{Type} Name");
+            var Location_Desc = sheet.FindCellLocation($"{Type} Description");
+
+            int beginCell_Name = Location_Name.Value.X;
+            int beginCell_Desc = Location_Desc.Value.X;
+            int beginRow = Location_Name.Value.Y + 1;
+
+            List<object> list = new List<object>();
+
+            for (int row = beginRow; row <= sheet.LastRowNum; row++)
+            {
+                string name = sheet.GetRow(row).GetCell(beginCell_Name).ToString();
+                string desc = sheet.GetRow(row).GetCell(beginCell_Desc).ToString();
+
+                if (string.IsNullOrWhiteSpace(desc)) continue;
+
+                if (Type == "Table")
+                {
+                    list.Add(new Table() { TableName = name, Description = desc });
+                }
+
+                if (Type == "Column")
+                {
+                    string TableName = sheet.GetRow(0).GetCell(2).ToString();
+                    list.Add(new Column() { TableName = TableName, ColumnName = name, Description = desc });
+                }
+            }
+
+            Export.Procedure(list);
         }
     }
 }
