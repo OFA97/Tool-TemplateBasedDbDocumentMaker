@@ -205,8 +205,15 @@ namespace DbDocumentMaker
 
         private void btnFillBackServer_Click(object sender, EventArgs e)
         {
+            ///step1.讀取xlsx
             ///step2.撈現有的資料表,欄位,表名稱對應[sheet],欄位名對應[]
+            ///
 
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Excel Files|*.xlsx;*.xls";
+            openFileDialog.Title = "選擇 Excel 檔案";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openFileDialog.FileName;
 
